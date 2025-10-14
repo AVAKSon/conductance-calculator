@@ -71,9 +71,9 @@
 
 #chamberTable th,
 #chamberTable td {
-  border: 2px solid #888888; /* Bold grey lines */
+  border: 10px solid #ccc; /* Bold grey lines */
   padding: 10px 14px;
-  text-align: left;
+  text-align: center;
 }
 
 #chamberTable th {
@@ -87,6 +87,7 @@
   gap: 20px; /* space between buttons */
   margin-bottom: 20px;
   align-items: center;
+  flex-grow: 1;
 }
 
 .page-buttons button {
@@ -149,35 +150,256 @@
   margin: 15px 0;
 }
 
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* space between logo and buttons */
+  margin-bottom: 20px;
+}
+
+.logo-placeholder {
+  width: 100px;      /* adjust as needed */
+  height: 50px;      /* adjust as needed */
+  background-color: #ddd; /* light grey for placeholder */
+  border: 2px dashed #aaa; /* optional dashed border for clarity */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #555;
+  border-radius: 6px;
+}
+
+.app-container {
+  display: flex;
+  height: 70vh;
+}
+
+.drop-zone {
+  width: 200px; 
+  min-width: 200px;
+  background-color: #fce9d4;
+  border-right: 2px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 20px;
+  text-align: center;
+}
+
+.drop-zone.dragover {
+  background-color: #f7d49a; /* highlight on drag */
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+}
+
+.master-db-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr; /* left search panel fixed, right table takes rest */
+  gap: 20px;
+  align-items: start;
+}
+
+.search-panel {
+  background-color: #fce9d4;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.search-panel h3 {
+  margin-top: 0;
+}
+
+.search-panel input, 
+.search-panel select {
+  width: 85%;
+  padding: 6px;
+  margin-top: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-panel button {
+  width: 85%;
+  padding: 8px;
+  font-weight: bold;
+  border-radius: 6px;
+  background-color: #fce9d4;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-panel button:hover {
+  background-color: #f7d49a;
+}
+
+.table-panel {
+  overflow-x: auto;
+}
+
+.table-panel h3 {
+  margin-top: 0;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+#masterDbTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#masterDbTable th, 
+#masterDbTable td {
+  border: 1px solid #999;
+  padding: 6px 10px;
+  text-align: center;
+}
+
+#masterDbTable th {
+  background-color: #eee;
+  font-weight: bold;
+}
+
+#simulationResults table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 20px;
+}
+
+#simulationResults th,
+#simulationResults td {
+  border: 10px solid #ccc; /* Bold grey lines */
+  padding: 10px 14px;
+  text-align: center;
+}
+
+#simulationResults th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.result-cell {
+  background-color: lightgreen;
+  font-weight: bold;
+}
+
 
 
 </style>
 <body>
 
-  <!-- Navigation Buttons -->
-  <div class="page-buttons">
-    <button onclick="showPage('fileInputPage')">File Input</button>
-    <button onclick="showPage('masterDbPage')">Master DB</button>
-    <button onclick="showPage('managementSpecPage')">Management Spec</button>
+  <div class="top-bar">
+    <div class="logo-placeholder">LOGO</div>
+    <div class="page-buttons">
+      <button onclick="showPage('fileInputPage')">File Input</button>
+      <button onclick="showPage('masterDbPage')">Master DB</button>
+      <button onclick="showPage('managementSpecPage')">Management Spec</button>
+    </div>
   </div>
+  
   
 
   <!-- Pages -->
   <div id="fileInputPage" class="tab-content">
-    <div id="fileInfo" class="metadata-grid"></div>
-    <div id="chamberButtons"></div>
-    <div id="chamberTable"></div>
-    <div class="bottom-buttons">
-      <label for="csvInput" class="file-input-button">Import File</label>
+    <div class="app-container">
+      <!-- Left side: drag & drop box -->
+      <div id="dropZone" class="drop-zone">
+        <p>Drag & Drop file here</p>
+        <input type="file" id="csvInput" hidden />
+      </div>
+    
+      <!-- Right side: main interface -->
+      <div class="main-content">
+        <div id="chamberButtons"></div>
+        <div id="fileInfo" class="metadata-grid"></div>
+        <div id="chamberTable"></div>
+        <div id="simulationResults" style="margin-top: 20px;"></div>
+      </div>
+    </div>    
+    <div id="buttonContainer" class="bottom-buttons">
+      <label for="csvInput" class="file-input-button" id="importFileBtn">Import File</label>
       <input type="file" id="csvInput" style="display:none" />
-      
       <button id="runSimulationBtn">Run Simulation</button>
+      <button id="backBtn" style="display: none;">Back to File Input</button>
     </div>
   </div>
 
   <div id="masterDbPage" class="tab-content">
     <h2>Master DB</h2>
-    <p>Coming soon...</p>
+    <div class="master-db-layout">
+      <!-- Left search panel -->
+      <div class="search-panel">
+        <h3>Search</h3>
+    
+        <label for="fabSearch">FAB</label>
+        <input type="text" id="fabSearch"/>
+    
+        <label for="makerSearch">Maker</label>
+        <input type="text" id="makerSearch"/>
+    
+        <label for="modelSearch">Model</label>
+        <input type="text" id="modelSearch"/>
+    
+        <label for="equipIdSearch">Equipment ID</label>
+        <input type="text" id="equipIdSearch"/>
+    
+        <label for="chamberSearch">Chamber</label>
+        <input type="text" id="chamberSearch"/>
+    
+        <label for="specSearch">모델관리기준</label>
+        <input type="text" id="specSearch"/>
+    
+        <button id="searchBtn">Search</button>
+      </div>
+    
+      <!-- Right table area -->
+      <div class="table-panel">
+        <h3>Master DB</h3>
+        <div class="table-container">
+          <table id="masterDbTable">
+            <thead>
+              <tr>
+                <th>Building</th>
+                <th>FAB</th>
+                <th>MAKER</th>
+                <th>MODEL</th>
+                <th>Equipment_ID</th>
+                <th>Chamber</th>
+                <th>Chamber ID</th>
+                <th>Spec_Standard</th>
+                <th>MIN_SPEC</th>
+                <th>MAX_SPEC</th>
+                <th>Final_Conductance(0.1Torr)</th>
+                <th>Final_Judgment_Ch</th>
+                <th>Final_Status(Flag Column)</th>
+                <th>Column 1</th>
+                <th>Column 2</th>
+                <th>Column 3</th>
+                <th>Column 4</th>
+                <th>Column 5</th>
+                <th>Modified_by_Account</th>
+                <th>Modified_DateTime</th>
+                <th>Simulation_DateTime</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rows will go here later -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>    
   </div>
 
   <div id="managementSpecPage" class="tab-content">

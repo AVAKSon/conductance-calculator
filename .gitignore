@@ -4,3 +4,7 @@
 /node_modules
 /venv
 /backend/dist
+/backend/.venv
+/backend/venv
+*.xlsx
+/backend/app/models

@@ -1,0 +1,24 @@
+curl -X POST http://127.0.0.1:8000/calculate_chamber \
+-H "Content-Type: application/json" \
+-d '{
+  "chamber_id": "Chamber1",
+  "code_id": "CodeA",
+  "pressure": 0.1,
+  "components": [
+    {
+      "type": "pipe",
+      "params": {
+        "Diameter_cm": 5.0,
+        "Length_cm": 20.0
+      }
+    },
+    {
+      "type": "reducer",
+      "params": {
+        "D1_cm": 5.0,
+        "D2_cm": 3.0,
+        "Length_cm": 10.0
+      }
+    }
+  ]
+}'
