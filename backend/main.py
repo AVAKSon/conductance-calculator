@@ -5,11 +5,10 @@ import pandas as pd
 import io
 from pydantic import BaseModel
 import os
-from app.services.model_loader import load_all_models
 
-from pydantic import BaseModel
-from typing import List
-from backend.app.services.calculation_service2 import predict_conductance
+import uvicorn
+import logging
+#from backend.app.services.calculation_service import predict_conductance
 
 import logging
 
@@ -17,6 +16,12 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 )
+
+app = FastAPI()
+
+from app.services.model_loader import load_all_models
+from pydantic import BaseModel
+from typing import List
 
 class ChamberUpdate(BaseModel):
     chamber: int
@@ -27,8 +32,6 @@ class CalcRequest(BaseModel):
     component: str
     regime: str
     features: List[float]
-
-app = FastAPI()
 
 df_filtered = None
 
@@ -47,7 +50,7 @@ async def startup_event():
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import List, Dict, Any
-from backend.app.services.calculation_service import _predict_single
+from app.services.calculation_service import _predict_single
 
 class Component(BaseModel):
     type: str
@@ -93,13 +96,13 @@ async def calculate_chamber(req: ChamberRequest):
     }
 
 
-@app.post("/calculate")
-async def calculate(req: CalcRequest):
-    try:
-        result = predict_conductance(req.component, req.regime, req.features)
-        return {"conductance": result}
-    except Exception as e:
-        return {"error": str(e)}
+# @app.post("/calculate")
+# async def calculate(req: CalcRequest):
+#     try:
+#         result = predict_conductance(req.component, req.regime, req.features)
+#         return {"conductance": result}
+#     except Exception as e:
+#         return {"error": str(e)}
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
@@ -197,14 +200,14 @@ async def get_current_data():
     }
 
 if __name__ == "__main__":
-    import uvicorn
-    import logging
+
+    from main import app
 
     with open("log.txt", "w") as f:
         f.write("Backend starting...\n")
 
     uvicorn.run(
-        "app:app",
+        app,
         host="127.0.0.1",
         port=8000,
         log_config=None

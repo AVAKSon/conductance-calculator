@@ -7,4 +7,5 @@
 /backend/.venv
 /backend/venv
 *.xlsx
-/backend/app/models
+/backend/app/models/expander
+/backend/app/models/reducer
