@@ -1,6 +1,6 @@
 cd backend
 
-uvicorn app:app --port 8000 --reload
+python -m uvicorn main:app --reload
 
 
 
